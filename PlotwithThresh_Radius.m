@@ -26,8 +26,8 @@ circ = @(radius, NucLoc) unique([reshape((round(radius.*cos(0:pi/2000:2*pi)+NucL
 
 allcor = [];
 allscore = [];
-for kk = 1:length(th)
-    figure, gif([datadir 'Threshpics/Radius' 'TH' num2str(th(kk)) '.gif'])
+for kk = 3;%1:length(th)
+    figure, %gif([datadir 'Threshpics/Radius' 'TH' num2str(th(kk)) '.gif'])
     ct = 1;
 
     for i = 1:length(datafiles) %loop over islets
@@ -54,7 +54,7 @@ for kk = 1:length(th)
             [c, indx] = sort(pixel.FinalCordata(j).Correlation);
             scatter(pixel.FinalCordata(j).Pixelsx(indx), pixel.FinalCordata(j).Pixelsy(indx),15, c,'filled'),h = colorbar;
             ylabel(h, 'Correlation with nucleus center')
-            gif
+            %gif
            radii = 1;
            score = 1;
            %set threshold
@@ -84,7 +84,7 @@ for kk = 1:length(th)
             legend('', 'Estimated','Real')
             hold off
             ct = ct+1;
-            gif
+            %gif
             %saveas(gcf, [datadir 'Threshpics\' datafiles(i).name 'cell' num2str(j) '.png'])
         end
     end

@@ -41,6 +41,10 @@ nuc_files = dir(strrep(strjoin([datapath filename(kt) '/' '*C2*.tif']),' ',''));
 
     try 
        load(strrep(strjoin(['/Volumes/Briggs_10TB/Merrin/Confocal/' filename(kt) 'RetrainAnalysis.mat']), ' ', ''))
+       filename = ["three","five", "two","one"];
+csvname = ["H2BmCherry Ucn3GCaMP-3_Detailed.csv", "H2BmCherry Ucn3GCaMP-5_Detailed.csv", "H2BmCherry Ucn3GCaMP-2_Detailed.csv", "H2BmCherry Ucn3GCaMP-1_Detailed.csv"]
+datapath = ['/Volumes/Briggs_10TB/Merrin/Confocal/'] 
+
     catch
         %% Load nucleus location 
         nucloc = readtable(strrep(strjoin([datapath csvname(kt)]),'/ ','/')); %import nucleus location csv
@@ -93,7 +97,7 @@ nuc_files = dir(strrep(strjoin([datapath filename(kt) '/' '*C2*.tif']),' ',''));
     
     %Because of that rotation, my nucleus location is rotated: flip back
 
-    for i = 1:perislet
+    for i = 3:perislet
         opts.ca = ca_im;
         opts.gif = 0;
         opts.normalized = 1;

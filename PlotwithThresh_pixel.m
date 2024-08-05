@@ -18,7 +18,7 @@ allscore = [];
 for kk = 1:3
     figure, gif([datadir 'Threshpics/' 'TH' num2str(th(kk)) '.gif'])
 
-    for i = 1:length(datafiles) %loop over islets
+    for i = 3:length(datafiles) %loop over islets
          load([datadir datafiles(i).name]) %load in islet
 
          isletcor = [];
@@ -29,7 +29,7 @@ for kk = 1:3
             [c, indx] = sort(FinalCordata(j).Correlation);
             scatter(FinalCordata(j).Pixelsx(indx), FinalCordata(j).Pixelsy(indx),15, c,'filled','linewidth',4),h = colorbar;
             ylabel(h, 'Correlation with nucleus center')
-            gif
+           % gif
             est_pix = indx(c>th(kk)); %maybe normalize to correlation through the whole thing
 
             
@@ -40,7 +40,7 @@ for kk = 1:3
 %             scatter(FinalCordata(j).Pixelsx(indx), FinalCordata(j).Pixelsy(indx),15, c,'filled'),h = colorbar;
 %             ylabel(h, 'Correlation with nucleus center')
                 
-            hold on, scatter(TrueCellx,TrueCelly, 16, 'r', 'filled')
+            hold on, scatter(TrueCellx,TrueCelly, 16, 'r')
             title(['TRAIN: Threshold:' num2str(th(kk)) ' ' datafiles(i).name ': cell ' num2str(j) ])
             legend('','Estimated','True')
             hold off 

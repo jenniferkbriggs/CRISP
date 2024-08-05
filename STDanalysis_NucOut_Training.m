@@ -45,6 +45,20 @@ addpath('~/Documents/GitHub/UniversalCode/')
         [image_new,allpix_new] = getcal_radius(maxradius, images, NucLoc, 1);
         
         [r, p] = corr(image_new,Y);
+
+        % if you want to visualize: 
+        normalized_data = r;
+        % Define a colormap (e.g., 'jet')
+        % cmap = (jet(length(normalized_data)))
+        % figure, scatter(allpix(:,1), allpix(:,2), 50, r, 'filled')
+        % c = colorbar;
+        % ylabel(c, 'Correlation With Center of Cell', 'FontSize',20)
+        % c.Location = 'eastoutside'
+        % set(gcf, 'color', 'white')
+        % set(gca, 'box','off')
+        % set(gca, 'fontsize',15)
+        % set(gca,'XColor', 'none','YColor','none')
+
         if opts.normalized == 1
         r = r/mean(r);
         end

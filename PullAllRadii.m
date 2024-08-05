@@ -1,5 +1,5 @@
 %%Estimate radius of all cells in the nuclei
-close all
+%close all
 clear all
 clc
 
@@ -54,7 +54,7 @@ for kt = 1:length(filename)
         nuimage = Nuc_vid(:,:,timetouse(kt));
         loc = [X,Y]; 
 
-        imnew = insertMarker(nuimage, loc);
+        imnew = insertMarker(ca_im, loc(61,:));
         figure, imshow(imnew)
         
         NucLoc = fliplr(loc);
@@ -65,12 +65,12 @@ for kt = 1:length(filename)
     %Because of that rotation, my nucleus location is rotated: flip back
     imAv = mean(Nuc_vid, 3);
     imAv = imAv/max(imAv(:));
-    for i = 2:length(NucLoc)
+    for i = 61:length(NucLoc)
         opts.ca = ca_im;
         opts.gif = 0;
         opts.normalized = 1;
         opts.title = [filename(kt) 'Islet' num2str(i)]
-        [Correlation, Pixelsx, Pixelsy] = STDanalysis_NucOut(Islet_vid,NucLoc(i,:),opts);
+        [Correlation, Pixelsx, Pixelsy] = STDanalysis_NucOut(rot90(Islet_vid,3),NucLoc(i,:),opts);
         
          
        radii = 1;

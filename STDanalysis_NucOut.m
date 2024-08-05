@@ -60,21 +60,31 @@ addpath('~/Documents/GitHub/UniversalCode/')
         Correlation(1:length(r),j) = r;
         pixelsx(1:length(allpix_new), j) = allpix_new(:,1);
         pixelsy(1:length(allpix_new), j) = allpix_new(:,2);
-%         nexttile(1), caim_new = insertMarker(opts.ca, allpix_new, 'color', 'g', 'size',1);
-%         imshow(caim_new)
-%         xlim([NucLoc(1)-maxradius, NucLoc(1)+maxradius])
-%         ylim([NucLoc(2)-maxradius, NucLoc(2)+maxradius])
-%         %plot(allpix_new(:,1),allpix_new(:,2),'o'),hold on,  plot(allpix(:,1), allpix(:,2),'o'), legend('Comparison','New'), title('Comparison Radius'), hold off
-%         nexttile(2), plot([1:size(image_new,1)], X), hold on, plot([1:size(image_base,1)], Y), hold off, title('Calcium Fluoresence')
-%         xlabel('Time')
-%         legend('New', 'Baseline')
-%         drawnow
-%         %pause(1)
-%         nexttile(3), plot(radius, r, 'o'), title('All Correlations'), hold on,
-%         xlabel('Radius [pix]')
+        nexttile(1), caim_new = insertMarker(opts.ca, ((allpix_new)), 'color', 'g', 'size',1);
+        imshow(caim_new)
+        xlim([NucLoc(1)-maxradius, NucLoc(1)+maxradius])
+        ylim([NucLoc(2)-maxradius, NucLoc(2)+maxradius])
+        %plot(allpix_new(:,1),allpix_new(:,2),'o'),hold on,  plot(allpix(:,1), allpix(:,2),'o'), legend('Comparison','New'), title('Comparison Radius'), hold off
+        nexttile(2), plot([1:size(image_new,1)], X), hold on, plot([1:size(image_base,1)], Y), hold off, ylabel('Calcium Fluoresence')
+        xlabel('Time')
+        set(gcf, 'color', 'white')
+    set(gca, 'box','off')
+    set(gca, 'fontsize',15)
+        legend('New', 'Baseline')
+        ylim([0, 11000])
+        drawnow
+        %pause(1)
+        nexttile(3), plot(radius, r, 'o'),('Pixel Correlations'), hold on,
+        set(gcf, 'color', 'white')
+        set(gca, 'box','off')
+        set(gca, 'fontsize',15)
+        xlabel('Radius [pix]')
 %         
-%         nexttile(4), plot(radius, mean(r), 'o'), title('Correlation Average'), hold on,
-%         xlabel('Radius [pix]')
+        nexttile(4), plot(radius, mean(r), 'o'), ylabel('Cell Average Correlation'), hold on,
+        xlabel('Radius [pix]')
+        set(gcf, 'color', 'white')
+        set(gca, 'box','off')
+        set(gca, 'fontsize',15)
         j = j+1;
         if g == 1
         gif
