@@ -1,13 +1,13 @@
 %%This script is how we define the training data and develop the ROC curve
 close all
-clear all
+%clear all
 clc
 
 addpath('~/Documents/GitHub/UniversalCode/');
 addpath('~/Documents/GitHub/Islet_Heterogeneity/')
 %chose islets to analyze
-filename = ["three","five", "two","one"];
-csvname = ["H2BmCherry Ucn3GCaMP-3_Detailed.csv", "H2BmCherry Ucn3GCaMP sample_Detailed.csv", "H2BmCherry Ucn3GCaMP-5_Detailed.csv", "H2BmCherry Ucn3GCaMP-2_Detailed.csv", "H2BmCherry Ucn3GCaMP-1_Detailed.csv"]
+filename = ["three","sample", "five", "two","one"];
+csvname = ["H2BmCherry Ucn3GCaMP-3_Detailed.csv",  "H2BmCherry Ucn3GCaMP sample_Detailed.csv", "H2BmCherry Ucn3GCaMP-5_Detailed.csv", "H2BmCherry Ucn3GCaMP-2_Detailed.csv", "H2BmCherry Ucn3GCaMP-1_Detailed.csv"]
 datapath = ['/Volumes/Briggs_10TB/Merrin/Confocal/'] 
 savepath = ['~/Documents/GitHub/ST_Analysis/Data/']
 
@@ -20,9 +20,9 @@ timetouse = [217, 194, 243, 363, 193];
 perislet = 15;
 
 %set seed
-thr = [0.25:0.05:1]
+thr = [-2:.05:3];%[0.25:0.05:1]
 
-for l = [5:length(thr)]
+for l = [1:length(thr)]
 for kt = 1:length(filename)
 
 %set random number generator
@@ -39,6 +39,10 @@ for mm = [1:3]; %I will also compare doing st analysis on good mask
     ca_files = dir(strrep(strjoin([datapath filename(kt) '/' '*C1*.tif']),' ',''));
     nuc_files = dir(strrep(strjoin([datapath filename(kt) '/' '*C2*.tif']),' ',''));
 
+   
+    if contains(ca_files(1).name, '._')
+        ca_files(1) = [];
+    end
     masktypes = {'Bad', 'Medium', 'Good'}
     masktype = masktypes{mm}
     %% Import Images %%
@@ -63,6 +67,7 @@ for mm = [1:3]; %I will also compare doing st analysis on good mask
     %Opts: 
     Opts.fig = 0;
     Opts.st_thr = thr(l);
+    Opts.Thr = 'st'
     %ST analysis:
     CellMask_st = STanalysis_refinemasks(Islet_vid, CellMask, Opts);
 
@@ -117,7 +122,7 @@ for mm = [1:3]; %I will also compare doing st analysis on good mask
     sensitivity(mm, l, kt) = tp/(tp+fn);
     specificity(mm, l, kt) = tn/(tn+fp);
 
-    disp(tp/(tp+fn)+tn/(tn+fp))
+        disp(tp/(tp+fn)+tn/(tn+fp))
      if tp+fp+fn+tn ~= length(reference)
          keyboard
      end
@@ -136,8 +141,9 @@ recall = sensitivity;
 figure, plot(squeeze(recall(1,:,:)), squeeze(precision(1,:,:)))
 
 figure,
-for i = 1:4
-    hold on, plot((squeeze(1-specificity(1,5:end,i))), (squeeze((sensitivity(1,5:end,i)))))
+for i = [1,2,3,4,5]
+    hold on, plot((squeeze(1-specificity(1,1:end,i))), (squeeze((sensitivity(1,1:end,i)))))
+    disp(trapz((squeeze(1-specificity(1,1:end,i))), (squeeze((sensitivity(1,1:end,i))))))
 end
 xlabel('False Positive Rate')
 ylabel('True Positive Rate')
@@ -147,6 +153,13 @@ set(gca, 'box','off')
 set(gca, 'FontSize',15)
 
 
+
+
+figure,
+for i = [1,2,3,4,5]
+    hold on, plot((squeeze(1-specificity(2,1:end,i))), (squeeze((sensitivity(2,1:end,i)))))
+    disp(trapz((squeeze(1-specificity(2,1:end,i))), (squeeze((sensitivity(2,1:end,i))))))
+end
 figure, plot(squeeze(1-specificity(2,:,:)), squeeze(sensitivity(2,:,:)))
 xlabel('False Positive Rate')
 ylabel('True Positive Rate')
@@ -212,7 +225,7 @@ title('Refining Masks: Receiver Operating Characteristic Curve')
 hold off;
 
 %% AUC: 
-for i = 1:4
+for i = 1:3
     for j = 1:2
         x = squeeze(1 - specificity(j, :, i));
         y = squeeze(sensitivity(j, :, i));
@@ -237,7 +250,7 @@ disp(['Mean AUC for medium masks: ' num2str(mean(auc(:,2))), ' with standard dev
 
 %% 
 
-save Data/CorrelatioThresholdROC.mat sensitivity specificity thr tn_all fp_all tp_all fn_all
+save Data/CorrelatioThresholdROC_st.mat sensitivity specificity thr tn_all fp_all tp_all fn_all
 
 
 

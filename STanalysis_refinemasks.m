@@ -18,6 +18,9 @@ function [CellMask_updated] = STDanalysis_refinemaks(images, CellMask, Opts)
 %Opts - Opt.fig = 0 or 1 for no figures or figures respectively
    %    Opt.st_thr = double that defines how many standard deviations to
    %    count as bad pixels. 
+   %    Opt.Thr = 'corr', 'st', if you want to use a fixed correlation
+   %    threshold or a threshold based on the cell's correlation
+   %    distribution
     images = double(images)+0.01; %note that it rotates 90 degrees again. not sure why
     CellMasksave = CellMask; %save old cell mask
 
@@ -85,32 +88,63 @@ function [CellMask_updated] = STDanalysis_refinemaks(images, CellMask, Opts)
        
         
 
+       switch Opts.Thr 
+           case 'corr'
+               if size(TCcheck, 2)>0
+                    try
+                        for c=1:size(TCcheck,2)
+                                [C1(c)] = corr(TCcheck(:,c),TCreference);
+                        end
+                    catch
+                        keyboard
+                    end
+                %pixel is bad if it shows no oscillations
+                
+                %badpix = find(Maxcor<5e6);
+                if cctt == 1
+                    C1_references = Opts.st_thr;
+                end
+                %if length(badpix) > .75*size(TCcheck,2)    
+        
+                        %standard deviation threshold - C1_references = std
+                       %badpix = find(C1<mean(C1) - C1_references);
+                     %Correlation threshold
+                       badpix = find(C1<C1_references);
+        
+                       cctt = cctt +1;
+                       clear C1
+                else
+                   disp('No pixels')
+                   badpix = [];
+                   clear TCcheck
+                end
+        
+        case 'st'
+
         
         if size(TCcheck,2) >0
-            try
-                for c=1:size(TCcheck,2)
-                        [C1(c)] = corr(TCcheck(:,c),TCreference);
-                end
-            catch
-                keyboard
-            end
+        for c=1:size(TCcheck,2)
+                [C1] = xcorr(TCcheck(:,c),TCreference,3);
+                Maxcor(c) =  max(C1);       
+        end
+
+
+        if cctt == 1
+            CTreference = Maxcor;
+        end
         %pixel is bad if it shows no oscillations
         
         %badpix = find(Maxcor<5e6);
-        if cctt == 1
-            C1_references = Opts.st_thr;
-        end
-        %if length(badpix) > .75*size(TCcheck,2)    
-
-                %standard deviation threshold - C1_references = std
-               %badpix = find(C1<mean(C1) - C1_references);
-             %Correlation threshold
-               badpix = find(C1<C1_references);
-
+        %if length(badpix) > .75*size(TCcheck,2)       
+               badpix = find(Maxcor<mean(CTreference) - Opts.st_thr*std(CTreference));
+              
                cctt = cctt +1;
-               clear C1
-        
-        
+           else
+           disp('No pixels')
+           badpix = [];
+           clear TCcheck
+        end  
+        end
         
        %end
        if cctt < 25
@@ -146,11 +180,7 @@ function [CellMask_updated] = STDanalysis_refinemaks(images, CellMask, Opts)
             clear TCcheck Maxcor Maxcor2
 
             %figure, plot(TCchecksm)
-         else
-           disp('No pixels')
-           badpix = [];
-           clear TCcheck
-        end
+
         end
 
 

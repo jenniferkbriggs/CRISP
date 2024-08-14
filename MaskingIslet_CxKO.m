@@ -310,10 +310,10 @@ imshow(RGB)
     output.(filename(kt).name(1:end-4)).(masktype).CellMask_st = CellMask;
 
     %ST analysis:
-        %Opts: 
-        Opts.fig = 1;
-        Opts.st_thr = 0.7; %as deterimined in ROCcurves_refiningmasks
-    %ST analysis:
+    %Opts: 
+    Opts.fig = 1;
+    Opts.st_thr =0.25;
+    Opts.Thr = 'st'
         CellMask = STanalysis_refinemasks(Islet_vid, CellMask, Opts);
         saveas(gcf, ((([savepath '/Figures/MasksRefinedSTAnalysis_ ' filename(kt).name '_' masktype '.fig'])))); % Saves connection map
         saveas(gcf, ((([savepath '/Figures/MasksRefinedSTAnalysis_ ' filename(kt).name '_' masktype '.png'])))); % Saves connection map
@@ -370,7 +370,7 @@ Med_s(i) = output.(file).Medium.corr_st;
 Good(i) = output.(file).Good.corr;
 Good_s(i) = output.(file).Good.corr_st;
 end
-writematrix(([Bad-Good,Bad_s-Good; Med-Good, Med_s-Good]), [savepath, 'Corr.csv'])
+writematrix(([Bad,Bad_s; Med, Med_s]), [savepath, 'Corr.csv'])
 
 for i = 1:3
 %difference between Rij: 
@@ -405,7 +405,7 @@ Med_s(i) = max(output.(file).Medium.N_st);
 Good(i) = max(output.(file).Good.N);
 Good_s(i) = max(output.(file).Good.N_st);
 end
-writematrix(([Bad', Med', Good', Bad_s', Med_s', Good_s']./Good')', [savepath, 'Max_N.csv'])
+writematrix(([Bad', Med', Good', Bad_s', Med_s', Good_s']')', [savepath, 'Max_N.csv'])
 
 
 for i = 1:3
@@ -417,7 +417,7 @@ Med_s(i) = mean(output.(file).Medium.N_st);
 Good(i) = mean(output.(file).Good.N);
 Good_s(i) = mean(output.(file).Good.N_st);
 end
-writematrix(([Bad', Med', Good', Bad_s', Med_s', Good_s']./Good')', [savepath, 'Mean_Degree.csv'])
+writematrix(([Bad', Med', Good', Bad_s', Med_s', Good_s']')', [savepath, 'Mean_Degree.csv'])
 
 
 for i = 1:3

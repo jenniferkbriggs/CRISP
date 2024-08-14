@@ -14,9 +14,11 @@ howmanychannel = 1;
 savepath = '/Users/brigjenn/Documents/GitHub/ST_Analysis/Data/'
 
 %chose islet to analyze
-filename = ["three","sample","five", "two","one"];
-csvname = ["H2BmCherry Ucn3GCaMP-3_Detailed.csv", "H2BmCherry Ucn3GCaMP sample_Detailed.csv", "H2BmCherry Ucn3GCaMP-5_Detailed.csv", "H2BmCherry Ucn3GCaMP-2_Detailed.csv", "H2BmCherry Ucn3GCaMP-1_Detailed.csv"]
+filename = ["three","five", "two"]%,"sample","one"];
+csvname = ["H2BmCherry Ucn3GCaMP-3_Detailed.csv", "H2BmCherry Ucn3GCaMP-5_Detailed.csv", "H2BmCherry Ucn3GCaMP-2_Detailed.csv"]%,...
+    %"H2BmCherry Ucn3GCaMP sample_Detailed.csv",  "H2BmCherry Ucn3GCaMP-1_Detailed.csv"]
 datapath = ['/Volumes/Briggs_10TB/Merrin/Confocal/'] 
+
 
 %initialize which time index to use nuclear locations
 %timetouse = 243%three: 217 - somewhat wiggly. %sample: 194; %five: 243%two: 363; %one: 193
@@ -26,7 +28,7 @@ perislet = 15;
 
 %set seed
 
-for kt = 1:4
+for kt = 1:3
 
 %set random number generator
 rng(kt*2)
@@ -186,8 +188,9 @@ nuc_files = dir(strrep(strjoin([datapath filename(kt) '/' '*C2*.tif']),' ',''));
     Opts.figs = 0;
     Thr = findoptRth(Calcium, Opts)
     [N, Adj, kpercent, histArrayPercShort,pval,Rij,s] = NetworkAnalysis(Calcium, Thr, Opts,0)%ii, mm, phase, figs)
-    
-    load([savepath 'RefineMasks.mat'],'output'); % Saves connection map
+        [averagephase, sorted_highphase]  = RunPhaseAnalysis_allsecondphase(Calcium);
+
+    %load([savepath 'RefineMasks.mat'],'output'); % Saves connection map
 
     output.(filename(kt)).(masktype).corr = mean(nonzeros(triu(Rij,1)));
     output.(filename(kt)).(masktype).N = N;
@@ -196,12 +199,14 @@ nuc_files = dir(strrep(strjoin([datapath filename(kt) '/' '*C2*.tif']),' ',''));
     output.(filename(kt)).(masktype).Thr = Thr;
     output.(filename(kt)).(masktype).CellMask_st = CellMask;
         output.(filename(kt)).(masktype).Rij = Rij;
+        output.(filename(kt)).(masktype).averagephase = averagephase;
+        output.(filename(kt)).(masktype).sorted_highphase = sorted_highphase;
 
     %ST analysis:
         %Opts: 
-        Opts.fig = 0;
-        Opts.st_thr = 0.7; %as deterimined in ROCcurves_refiningmasks
-    %ST analysis:
+            Opts.fig = 0;
+    Opts.st_thr =0.25;
+    Opts.Thr = 'st'
         CellMask = STanalysis_refinemasks(Islet_vid, CellMask, Opts);
         saveas(gcf, (strrep(strjoin([savepath '/Figures/MasksRefinedSTAnalysis_ ' filename(kt) '_' masktype '.fig']), ' ', ''))); % Saves connection map
         saveas(gcf, (strrep(strjoin([savepath '/Figures/MasksRefinedSTAnalysis_ ' filename(kt) '_' masktype '.png']), ' ', ''))); % Saves connection map
@@ -224,20 +229,24 @@ nuc_files = dir(strrep(strjoin([datapath filename(kt) '/' '*C2*.tif']),' ',''));
     %Calculate Correlatin & Network Info:
     %Thr = findoptRth(Calcium_2, Opts) - use threshold from before:
     [N, Adj, kpercent, histArrayPercShort,pval,Rij,s] = NetworkAnalysis(Calcium_2, Thr, Opts,0)%ii, mm, phase, figs)
-    
+    [averagephase, sorted_highphase]  = RunPhaseAnalysis_allsecondphase(Calcium_2);
+
     output.(filename(kt)).(masktype).corr_st = mean(nonzeros(triu(Rij,1)));
     output.(filename(kt)).(masktype).N_st = N;
     output.(filename(kt)).(masktype).Calcium_st = Calcium_2;
     output.(filename(kt)).(masktype).Adj_st = Adj;
     output.(filename(kt)).(masktype).Thr_st = Thr;
     output.(filename(kt)).(masktype).CellMask_st = CellMask;
+        output.(filename(kt)).(masktype).averagephase_st = averagephase;
+        output.(filename(kt)).(masktype).sorted_highphase_st = sorted_highphase;
+
 
         output.(filename(kt)).(masktype).Rij_st = Rij;
 
     save([savepath 'RefineMasks.mat'],'output'); % Saves connection map
 
 
-    clear Calcium2
+    clear Calcium2 
     end
 end
 end
@@ -245,7 +254,7 @@ close all
 
 % Analysis: 
 
-for i = 1:4
+for i = 1:3
 %difference between Rij: 
 file = string(filename(i));
 output.(file).Bad.Rij(logical(eye(size(output.(file).Bad.Rij)))) = NaN;
@@ -256,7 +265,7 @@ output.(file).Medium.Rij(logical(eye(size(output.(file).Bad.Rij)))) = NaN;
 output.(file).Medium.Rij_st(logical(eye(size(output.(file).Bad.Rij)))) = NaN;
 end
 
-for i = 1:4
+for i = 1:3
 file = string(filename(i));
 
 Bad(i) = mean(mean(output.(file).Bad.Rij-output.(file).Good.Rij, 'omitnan'), 'omitnan');
@@ -266,8 +275,33 @@ Med_s(i) = mean(mean(output.(file).Medium.Rij_st-output.(file).Good.Rij, 'omitna
 end
 writematrix(([Bad,Bad_s; Med, Med_s]), [savepath, 'Rij.csv'])
 
+for i = 1:3
+file = string(filename(i));
 
-for i = 1:4
+Bad2(i,:) = mean(output.(file).Bad.Rij-output.(file).Good.Rij, 'omitnan');
+Bad_s2(i,:) = (mean(output.(file).Bad.Rij_st-output.(file).Good.Rij, 'omitnan'));
+Med2(i,:) = (mean(output.(file).Medium.Rij- output.(file).Good.Rij, 'omitnan'));
+Med_s2(i,:) = (mean(output.(file).Medium.Rij_st-output.(file).Good.Rij, 'omitnan'));
+end
+writematrix(([reshape(Bad2, [],1),reshape(Bad_s2, [],1)]), [savepath, 'Rij_manybad.csv'])
+writematrix(([reshape(Med2,[],1), reshape(Med_s2,[],1)]), [savepath, 'Rij_manymed.csv'])
+
+
+
+
+
+for i = 1:3
+file = string(filename(i));
+
+Bad(i) = mean(mean(abs(output.(file).Bad.averagephase-output.(file).Good.averagephase), 'omitnan'), 'omitnan');
+Bad_s(i) = mean(mean(abs(output.(file).Bad.averagephase_st-output.(file).Good.averagephase), 'omitnan'), 'omitnan');
+Med(i) = mean(mean(abs(output.(file).Medium.averagephase- output.(file).Good.averagephase), 'omitnan'), 'omitnan');
+Med_s(i) = mean(mean(abs(output.(file).Medium.averagephase_st-output.(file).Good.averagephase), 'omitnan'), 'omitnan');
+end
+writematrix(([Bad,Bad_s; Med, Med_s]), [savepath, 'PhaseDiff.csv'])
+
+
+for i = 1:3
 file = filename(i);
 Bad(i) = output.(file).Bad.corr;
 Bad_s(i) = output.(file).Bad.corr_st;
@@ -276,9 +310,11 @@ Med_s(i) = output.(file).Medium.corr_st;
 Good(i) = output.(file).Good.corr;
 Good_s(i) = output.(file).Good.corr_st;
 end
-writematrix(([Bad./Good,Bad_s./Good; Med./Good, Med_s./Good]), [savepath, 'Corr.csv'])
+writematrix([Bad'-Good',Bad_s'-Good'], [savepath, 'Corr_Bad.csv'])
 
-for i = 1:4
+writematrix(([Med'-Good', Med_s'-Good']), [savepath, 'Corr_Med.csv'])
+
+for i = 1:3
 file = filename(i);
 Bad(i) = max(output.(file).Bad.N);
 Bad_s(i) = max(output.(file).Bad.N_st);
@@ -287,7 +323,7 @@ Med_s(i) = max(output.(file).Medium.N_st);
 Good(i) = max(output.(file).Good.N);
 Good_s(i) = max(output.(file).Good.N_st);
 end
-writematrix(([Bad', Med', Good', Bad_s', Med_s', Good_s']./Good')', [savepath, 'Max_N.csv'])
+writematrix(([Bad',Bad_s', Med', Med_s']-Good')', [savepath, 'Max_N.csv'])
 
 
 for i = 1:4
