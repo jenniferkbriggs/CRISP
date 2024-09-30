@@ -1,4 +1,4 @@
-%%This script is how we define the training data and develop the ROC curve
+%%Here we mask and test testing data for cell mask refinement:
 close all
 clear all
 clc
@@ -314,7 +314,7 @@ imshow(RGB)
     Opts.fig = 1;
     Opts.st_thr =0.25;
     Opts.Thr = 'st'
-        CellMask = STanalysis_refinemasks(Islet_vid, CellMask, Opts);
+        CellMask = Mask_refinement(Islet_vid, CellMask, Opts);
         saveas(gcf, ((([savepath '/Figures/MasksRefinedSTAnalysis_ ' filename(kt).name '_' masktype '.fig'])))); % Saves connection map
         saveas(gcf, ((([savepath '/Figures/MasksRefinedSTAnalysis_ ' filename(kt).name '_' masktype '.png'])))); % Saves connection map
         

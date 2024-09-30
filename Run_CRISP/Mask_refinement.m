@@ -1,8 +1,10 @@
-function [CellMask_updated] = STDanalysis_refinemaks(images, CellMask, Opts)
+function [CellMask_updated] = Mask_refinement(images, CellMask, Opts)
 %Jennifer Briggs 02.2022
+
 %This function takes a time course of pixels with masks differentiating
 %cells and removes pixels within that mask that do not correlate with the
 %rest of the pixels (e.g. likely not a part of the cell.)
+
 
 %images is the image file in matrix form (x,y,t). Currently only accepting
 %3D matrices (e.g. no z stacks) so z stacks should be fed in separately. 
@@ -21,6 +23,7 @@ function [CellMask_updated] = STDanalysis_refinemaks(images, CellMask, Opts)
    %    Opt.Thr = 'corr', 'st', if you want to use a fixed correlation
    %    threshold or a threshold based on the cell's correlation
    %    distribution
+
     images = double(images)+0.01; %note that it rotates 90 degrees again. not sure why
     CellMasksave = CellMask; %save old cell mask
 

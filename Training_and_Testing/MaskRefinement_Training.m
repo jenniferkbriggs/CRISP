@@ -1,4 +1,4 @@
-%%This script is how we define the training data and develop the ROC curve
+%%Here we mask and training data set for cell mask refinement:
 close all
 clear all
 clc
@@ -181,14 +181,12 @@ nuc_files = dir(strrep(strjoin([datapath filename(kt) '/' '*C2*.tif']),' ',''));
     end
     
     %Calculate Correlation & Network Info:
-
     %First do 5 links
     Opts.Method = 'Degree';
     Opts.avDeg = 5;
     Opts.figs = 0;
     Thr = findoptRth(Calcium, Opts)
     [N, Adj, kpercent, histArrayPercShort,pval,Rij,s] = NetworkAnalysis(Calcium, Thr, Opts,0)%ii, mm, phase, figs)
-        [averagephase, sorted_highphase]  = RunPhaseAnalysis_allsecondphase(Calcium);
 
     %load([savepath 'RefineMasks.mat'],'output'); % Saves connection map
 
@@ -198,16 +196,16 @@ nuc_files = dir(strrep(strjoin([datapath filename(kt) '/' '*C2*.tif']),' ',''));
     output.(filename(kt)).(masktype).Adj = Adj;
     output.(filename(kt)).(masktype).Thr = Thr;
     output.(filename(kt)).(masktype).CellMask_st = CellMask;
-        output.(filename(kt)).(masktype).Rij = Rij;
-        output.(filename(kt)).(masktype).averagephase = averagephase;
-        output.(filename(kt)).(masktype).sorted_highphase = sorted_highphase;
+    output.(filename(kt)).(masktype).Rij = Rij;
+    output.(filename(kt)).(masktype).averagephase = averagephase;
+    output.(filename(kt)).(masktype).sorted_highphase = sorted_highphase;
 
     %ST analysis:
         %Opts: 
-            Opts.fig = 0;
+    Opts.fig = 0;
     Opts.st_thr =0.25;
     Opts.Thr = 'st'
-        CellMask = STanalysis_refinemasks(Islet_vid, CellMask, Opts);
+        CellMask = Mask_refinement(Islet_vid, CellMask, Opts);
         saveas(gcf, (strrep(strjoin([savepath '/Figures/MasksRefinedSTAnalysis_ ' filename(kt) '_' masktype '.fig']), ' ', ''))); % Saves connection map
         saveas(gcf, (strrep(strjoin([savepath '/Figures/MasksRefinedSTAnalysis_ ' filename(kt) '_' masktype '.png']), ' ', ''))); % Saves connection map
         
