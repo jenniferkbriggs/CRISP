@@ -33,7 +33,6 @@ Inputs:
 
 
 
-
 # Training and Testing: 
 
 This folder contains code for training and testing CRISP, including masking calcium images, creating ROC curves, and running network analysis. 
@@ -41,7 +40,6 @@ This folder contains code for training and testing CRISP, including masking calc
 In *MaskRefinement_Training.m*, *NetworkAnalysis* function is called -- this function can be downloaded at: https://github.com/jenniferkbriggs/Islet_Heterogeneity
 
 # Plotting:
-
-
+Various code for plotting results. 
 
 

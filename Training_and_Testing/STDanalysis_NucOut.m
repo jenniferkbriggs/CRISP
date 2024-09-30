@@ -1,13 +1,9 @@
 function[Correlation, pixelsx, pixelsy] = STDanalysis_NucOut(images,NucLoc,opts)
 addpath('~/Documents/GitHub/UniversalCode/')
 %Jennifer Briggs 03.2022
-%This function takes a nucleus location and itteratively pulls more pixels
-%around that location until the pixels on the outermost edge appear to not
-%be apart of the cell. Whether or not the pixels are a part of the cell is
-%based on the assumption that pixels from the same cell will have extremely
-%similar behavior (minus noise). Therefore, once the behavior of pixels on
-%the outermost radius of the cell deviates too much (based on the threshold
-%(thr), the cell radius and corresponding timecourse is exported.
+%This function takes a nucleus location and itteratively pulls more pixels around that location until the pixels on the outermost edge appear to not
+%be apart of the cell. Whether or not the pixels are a part of the cell is based on the assumption that pixels from the same cell will have extremely similar behavior (minus noise). Therefore, once the behavior of pixels on
+%the outermost radius of the cell deviates too much (based on the threshold (thr), the cell radius and corresponding timecourse is exported.
 
 %images is the image file in matrix form (x,y,t). Currently only accepting
 %3D matrices (e.g. no z stacks) so z stacks should be fed in separately.
@@ -26,7 +22,7 @@ addpath('~/Documents/GitHub/UniversalCode/')
     g = 0
     %pull in baseline oscillation
     [image_base,allpix] = getcal_radius(radius, images, NucLoc,1);
-    try
+    try %You can make a gif of the nucleus growing if you want
         if opts.gif
         disp([opts.title '.gif'])
         giffig = figure, ti = tiledlayout(2,2), ti.TileSpacing = 'compact'
