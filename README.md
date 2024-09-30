@@ -13,10 +13,10 @@ Inputs:
 
 - Cell Mask is a pixel x pixel matrix of the imaging file. Any pixel that is considered to be a part of a cell has the index of that corresponding cell. For example, if we are looking at a 5x5 pixel images with 1 cell inside, cell mask would be:  [0, 0, 0, 0, 0; 0, 1, 0, 0, 0; 0, 1, 1, 0, 0; 0, 0, 0, 0, 0; 0, 0, 0, 0, 0]
 
-- Opts - Options structure containing thresholds and figure options: 
--- Opt.fig = 0 or 1 for no figures or figures respectively
--- Opt.st_thr = double that defines how many standard deviations to count as bad pixels. If Opt.Thr == 'corr' then Opt.st_thr is the actual threshold for the correlation coefficient. 
--- Opt.Thr = 'corr', 'st', if you want to use a fixed correlation threshold (corr) or a threshold based on the cell's correlation distribution (st). (Manuscript used st to be more generalizable)
+- Opts - Options structure containing thresholds and figure options:
+    - Opt.fig = 0 or 1 for no figures or figures respectively
+    - Opt.st_thr = double that defines how many standard deviations to count as bad pixels. If Opt.Thr == 'corr' then Opt.st_thr is the actual threshold for the correlation coefficient.
+    - Opt.Thr = 'corr', 'st', if you want to use a fixed correlation threshold (corr) or a threshold based on the cell's correlation distribution (st). (Manuscript used st to be more generalizable)
 
 ## CRISP_annulus_corr
 This function takes a nucleus location and itteratively pulls more pixels around that location until the pixels on the outermost edge appear to not be apart of the cell. Whether or not the pixels are a part of the cell is based on the assumption that pixels from the same cell will have extremely similar behavior (minus noise). Therefore, once the behavior of pixels on the outermost radius of the cell deviates too much (based on the threshold (thr), the cell radius and corresponding timecourse is exported.
@@ -26,10 +26,10 @@ Inputs:
 
 - NucLoc is the X,Y position of the center of the nucleus (note, if this changes overtime, take the median for the most accurate result).
 
-- opts - Options structure containing thresholds and figure options: 
--- opt.figs = 0 or 1 for no figures or figures respectively
--- opts.score_thr = score threshold
--- opts.th_pix = pixel correlation threshold
+- opts - Options structure containing thresholds and figure options:
+    - opt.figs = 0 or 1 for no figures or figures respectively
+    - opts.score_thr = score threshold
+    - opts.th_pix = pixel correlation threshold
 
 
 
