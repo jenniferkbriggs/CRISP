@@ -1,4 +1,4 @@
-#CRISP: CRISP: Correlation-Refined Image Segmentation Process
+# CRISP: Correlation-Refined Image Segmentation Process
 
 This repository contains all code used in the development and testing of CRISP. The code is sorted into folders: 
 1. [Run CRISP](#Run_CRISP)
