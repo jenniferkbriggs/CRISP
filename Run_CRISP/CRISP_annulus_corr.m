@@ -1,4 +1,4 @@
-function [Correlation, radius, pixelsx, pixelsy] = CRISP_annulus_corr(images, NucLoc, opts)
+function [Correlation, radius, pixelsx, pixelsy, score] = CRISP_annulus_corr(images, NucLoc, opts)
     % Jennifer Briggs 03.2022
     % This function identifies the cell boundary based on pixel behavior. It expands a radius around the nucleus location and calculates correlations between pixel intensity changes, stopping when the behavior deviates beyond a threshold.
     
@@ -13,9 +13,10 @@ function [Correlation, radius, pixelsx, pixelsy] = CRISP_annulus_corr(images, Nu
         % Threshold for pixel correlation and score
         th_pix = opts.th_pix;   
         score_thr = opts.score_thr;
+        score = 1;
     
         % Initialize radius and maximum allowed radius
-        radius = 2; % Initial radius
+        radius = opts.radiusstart; % Initial radius
         maxradius = 40; % Maximum radius to avoid excessive expansion
     
         g = 0; % GIF counter for optional GIF creation
@@ -55,32 +56,28 @@ function [Correlation, radius, pixelsx, pixelsy] = CRISP_annulus_corr(images, Nu
         pixelsx = zeros(maxradius^2, maxradius);
         pixelsy = zeros(maxradius^2, maxradius);
     
+
         % Start CRISP (Cell Radius Identification by Simulated Pixels):
-        score_thr = 1;
-        Correlation = [];
-        
-        while score < score_thr % Expand until error exceeds the threshold
-            clear Correlation
+        while score > score_thr & radius < maxradius % Expand until error exceeds the threshold
             radius = radius + 1; % Increase the radius at each iteration
     
             % Get all pixels within the current radius
-            [image_new, allpix_new] = getcal_radius(radius, images, NucLoc, 0);
+            [image_new, allpix_new] = getcal_radius(radius, images, NucLoc, 1);
             
             % Calculate the average pixel behavior within the new radius
-            Y = mean(image_new, 2);
+            X = mean(image_new, 2);
     
             % Compute the correlation of new pixels with the average
-            [r, p] = corr(image_new, Y);
-            Correlation(1:length(r)) = r;
+            [r] = corr(image_new, Y);
+            Correlation(1:length(r)) = r/mean(r);
             pixelsx(1:length(allpix_new), j) = allpix_new(:, 1); % Store X coordinates of pixels
             pixelsy(1:length(allpix_new), j) = allpix_new(:, 2); % Store Y coordinates of pixels
     
             % Calculate the score: p+
             pix_belowth = length(find(nonzeros(Correlation) > th_pix));
             [tot_pix] = length(nonzeros(Correlation));
-            score = pix_belowth(radius) / tot_pix - radius / 100;
+            score = pix_belowth / tot_pix - radius / 100;
         end
-    
     end
     
     % Helper function to calculate pixel fluoresence for a given radius
