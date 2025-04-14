@@ -44,7 +44,7 @@ nuc_files = dir(strrep(strjoin([datapath filename(kt) '/' '*C2*.tif']),' ',''));
     masktype = masktypes{mm}
     %% Import Images %%
     %import calcium
-    for i = 1:length(ca_files)
+    for i = 2:length(ca_files)-1
         fulldatapath = strrep(strjoin([datapath filename(kt) '/' ca_files(i).name]),' ','');
         image = imread(fulldatapath);
         Islet_vid(:,:,i) = image; %calcium files are loaded as a X pixel x Y pixel x Time
@@ -152,17 +152,17 @@ nuc_files = dir(strrep(strjoin([datapath filename(kt) '/' '*C2*.tif']),' ',''));
 
   
    %Show image with cell masks 
-    cells_outline = imfuse(caim_nuc, CellMask);
-    cells_w_labels = figure;
-    imshow(cells_outline)
-    title(['Islet ' filename(kt)])
-
-    for c = 1:perislet
-        text(loc(trainingcells(c),1), loc(trainingcells(c),2), num2str(c), 'Color', 'w'); % Labels cells in the image with their respective region number
-    end
-
-    saveas(cells_w_labels, (strrep(strjoin([savepath '/Figures/Masks_ ' filename(kt) '_' masktype '.fig']), ' ', ''))); % Saves connection map
-    saveas(cells_w_labels, (strrep(strjoin([savepath '/Figures/Masks_ ' filename(kt) '_' masktype '.png']), ' ', ''))); % Saves connection map
+    % cells_outline = imfuse(caim_nuc, CellMask);
+    % cells_w_labels = figure;
+    % imshow(cells_outline)
+    % title(['Islet ' filename(kt)])
+    % 
+    % for c = 1:perislet
+    %     text(loc(trainingcells(c),1), loc(trainingcells(c),2), num2str(c), 'Color', 'w'); % Labels cells in the image with their respective region number
+    % end
+    % 
+    % saveas(cells_w_labels, (strrep(strjoin([savepath '/Figures/Masks_ ' filename(kt) '_' masktype '.fig']), ' ', ''))); % Saves connection map
+    % saveas(cells_w_labels, (strrep(strjoin([savepath '/Figures/Masks_ ' filename(kt) '_' masktype '.png']), ' ', ''))); % Saves connection map
     
     if 1
     Calcium = [];

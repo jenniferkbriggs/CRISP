@@ -10,16 +10,16 @@ th_rad = 0.83; %score for radius.
 %load:
 savepath = '/Users/brigjenn/Documents/GitHub/ST_Analysis/Data/'
 load(([savepath 'five_Good.mat']))
-title = ['five' ...
-    '']
 
-kl = 4
-ll = 14
-files = dir('/Volumes/Briggs_10TB/CRISPdata/Analysis/*.csv')
+ll = 5
 
-%load voronoi:
-Voron = load(['/Volumes/Briggs_10TB/CRISPdata/Analysis/' title 'Voronoi_results.mat']);
+%files = dir('/Volumes/Briggs_10TB/CRISPdata/Analysis/*.csv')
 
+%load voronoi:%
+%Voron = load(['/Volumes/Briggs_10TB/CRISPdata/Analysis/' title 'Voronoi_results.mat']);
+files = dir('/Users/brigjenn/Library/CloudStorage/OneDrive-TheUniversityofColoradoDenver/Anschutz/Islet/CRISP/ReviewFigs/SelectedNucs/*.csv')
+cMask = load([files(1).folder '/' files(ll).name])
+Voron.CellMask = cMask;
 
 
 % need to match reference cells with real cell - loop over to find the
@@ -110,9 +110,9 @@ for j = 1:max(max(CellMask)) %loop over cells
     end
 end
 
-
-save(['/Volumes/Briggs_10TB/CRISPdata/Analysis/' files(ll).name 'RadiusAnalysis.mat']);
-
 mean2(DL_rad - trueRadii')
 
 std(DL_rad - trueRadii, [], 'all')
+
+
+save(['/Volumes/Briggs_10TB/CRISPdata/Analysis/' files(ll).name 'RadiusAnalysis.mat']);

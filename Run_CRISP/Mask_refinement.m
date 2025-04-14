@@ -24,7 +24,7 @@ function [CellMask_updated] = Mask_refinement(images, CellMask, Opts)
    %    threshold or a threshold based on the cell's correlation
    %    distribution
 
-    images = double(images)+0.01; %note that it rotates 90 degrees again. not sure why
+    images = double(images)+0.01;
     CellMasksave = CellMask; %save old cell mask
 
     if Opts.fig
@@ -58,9 +58,13 @@ function [CellMask_updated] = Mask_refinement(images, CellMask, Opts)
 
         
        [rr, cc] = find(mean(MaskedIMGstack,3));
+       
+        xx = round([mean(rr)-0.05*length(rr):mean(rr)+0.05*length(rr)]);%round(mean(rr)-std(rr)./2:round(mean(rr))+std(rr)./2);
+        yy = round([mean(cc)-0.05*length(cc):mean(cc)+0.05*length(cc)]);%round(mean(cc)-std(cc)./2:round(mean(cc))+std(cc)./2);
 
-        xx = round(mean(rr)-std(rr)./2:round(mean(rr))+std(rr)./2);
-        yy = round(mean(cc)-std(cc)./2:round(mean(cc))+std(cc)./2);
+        % or 
+
+
 
         %make grid:
         [xxx, yyy] = meshgrid(xx,yy);

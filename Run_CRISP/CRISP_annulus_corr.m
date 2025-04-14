@@ -37,7 +37,7 @@ function [Correlation, radius, pixelsx, pixelsy, score] = CRISP_annulus_corr(ima
                 ylim([NucLoc(2)-maxradius, NucLoc(2)+maxradius])
                 
                 % Plot the baseline oscillation in the next tile
-                nexttile(2), plot([1:size(image_base, 1)], image_base)
+                nexttile(2), plot([1:size(image_base, 1)], image_base
                 sgtitle([opts.title])
                 
                 % Save the GIF
